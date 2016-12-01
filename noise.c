@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:43:08 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 06:37:46 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 08:55:40 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,17 @@ get_neighbours
 	(t_noise_u32 *neighbours
 	 , t_noise_val x)
 {
-	t_noise_i32		iter;
-	unsigned int	i;
-	unsigned int	j;
+	size_t				i;
+	size_t				j;
+	static t_noise_i32	iter[NOISE_DIM_2] = NEIGHBOURS;
 
-	i = 0;
-	while (i < NOISE_DIM)
-		iter[i++] = 0;
 	i = 0;
 	while (i < NOISE_DIM_2)
 	{
-		j = i % 3;
-		if (iter[j] == 0)
-			iter[j] = 1;
-		else if (iter[j] == 1)
-			iter[j] = -1;
-		else if (iter[j] == -1)
-			iter[j] = 0;
 		j = 0;
 		while (j < NOISE_DIM)
 		{
-			if (iter[j] == -1 && x[j] <= 1.0)
-				neighbours[i][j] = 0;
-			else
-				neighbours[i][j] = iter[j] + (unsigned int)x[j];
+			neighbours[i][j] = iter[i % NOISE_DIM_2][j] + x[j];
 			j++;
 		}
 		i++;
@@ -67,11 +54,11 @@ dot_dist_grad
 		i++;
 	}
 	i = 0;
-	hash = 1;
+	hash = n->seed;
 	while (i < NOISE_DIM)
-		hash *= (x[i++]);
-	hash *= n->seed;
+		hash *= x[i++];
 	grad = n->grads[HASH(hash)];
+	i = 0;
 	ret = 0;
 	while (i < NOISE_DIM)
 	{
@@ -87,12 +74,15 @@ lerp
 	 , t_noise_unit x1
 	 , t_noise_unit x)
 {
-	x = (x - x0)/(x1 - x0);
-	if (x < x0)
-		x = x0;
-	else if (x > x1)
-		x = x1;
-	return (x * x * (3 - 2 * x));
+	t_noise_unit	c;
+
+	c = (x - x0)/(x1 - x0);
+	if (c > 1)
+		c = 1;
+	if (c < 0)
+		c = 0;
+	c = c * c * c * (c * (c * 6 - 15) + 10);
+	return (x0 + c * x0 + x * x1);
 }
 
 static t_noise_unit
@@ -103,8 +93,6 @@ dot_lerp
 	 , t_noise_val x)
 {
 	t_noise_unit	tmp[NOISE_DIM_2];
-	t_noise_unit	l0;
-	t_noise_unit	l1;
 	unsigned int	i;
 
 	i = 0;
@@ -113,15 +101,19 @@ dot_lerp
 		tmp[i] = dot_dist_grad(n, x, neighbours[i]);
 		i++;
 	}
-	l0 = lerp(tmp[0], tmp[1], weights[0]);
-	i = 1;
+	i = 0;
+	while (i < NOISE_DIM_2)
+	{
+		tmp[i] = lerp(tmp[i], tmp[i + 1], weights[i % NOISE_DIM]);
+		i += 2;
+	}
+	i = 0;
 	while (i < NOISE_DIM)
 	{
-		l1 = lerp(tmp[i], tmp[i + 1], weights[i - 1]);
-		l0 = lerp(l0, l1, weights[i - 1]);
+		tmp[i] = lerp(tmp[i], tmp[i + 1], weights[i % NOISE_DIM]);
 		i++;
 	}
-	return (l0);
+	return (tmp[0]);
 }
 
 t_noise_unit

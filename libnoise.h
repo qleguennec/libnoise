@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:50:48 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 06:41:47 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 07:54:52 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 # endif
 
 # define NOISE_DIM_2		NOISE_DIM * NOISE_DIM
+
+# if (NOISE_DIM == 2)
+#  define NEIGHBOURS		{{0, 1}, {0, -1}, {1, 0}, {1, -1}}
+# endif
 
 # include <stdlib.h>
 
