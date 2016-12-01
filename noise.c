@@ -6,13 +6,11 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:43:08 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 01:44:10 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 01:48:58 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libnoise.h"
-
-#define LERP(x, y, w) ((1.0 - w) * x + w * y)
+#include "libnoise_intern.h"
 
 static void
 get_neighbour

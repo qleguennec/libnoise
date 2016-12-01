@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:50:48 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 00:31:54 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 02:07:17 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,8 @@ typedef struct			s_noise
 	unsigned long		seed;
 	size_t				ncols;
 }						t_noise;
+
+size_t					noise_init(t_noise *n, unsigned int nseeds);
+t_noise_unit			noise(t_noise *n, t_noise_val x);
 
 #endif
