@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 19:29:28 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/11/30 20:49:18 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 06:42:03 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define LIBNOISE_INTERN_H
 
 #include "libnoise.h"
+#include "../libft/libft.h"
 
-unsigned long	hash(t_noise_val x, unsigned long seed);
+#define HASH(x) (((unsigned long)(x * (double)n->k)) % (unsigned long)n->ngrads)
 
 #endif

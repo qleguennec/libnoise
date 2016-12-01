@@ -6,28 +6,45 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:43:08 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 01:48:58 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/01 06:37:46 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libnoise_intern.h"
+#include <limits.h>
 
 static void
-get_neighbour
-	(t_noise_u32 *neighbour
-	 , t_noise_val x
-	 , unsigned int sign)
+get_neighbours
+	(t_noise_u32 *neighbours
+	 , t_noise_val x)
 {
+	t_noise_i32		iter;
+	unsigned int	i;
 	unsigned int	j;
 
-	j = 0;
-	while (j < NOISE_DIM)
+	i = 0;
+	while (i < NOISE_DIM)
+		iter[i++] = 0;
+	i = 0;
+	while (i < NOISE_DIM_2)
 	{
-		if (j % 2)
-			(*neighbour)[j] = (unsigned int)x[j];
-		else
-			(*neighbour)[j] = (sign ? -1 : 1) + (unsigned int)x[j];
-		j++;
+		j = i % 3;
+		if (iter[j] == 0)
+			iter[j] = 1;
+		else if (iter[j] == 1)
+			iter[j] = -1;
+		else if (iter[j] == -1)
+			iter[j] = 0;
+		j = 0;
+		while (j < NOISE_DIM)
+		{
+			if (iter[j] == -1 && x[j] <= 1.0)
+				neighbours[i][j] = 0;
+			else
+				neighbours[i][j] = iter[j] + (unsigned int)x[j];
+			j++;
+		}
+		i++;
 	}
 }
 
@@ -41,7 +58,7 @@ dot_dist_grad
 	t_noise_unit	ret;
 	t_noise_val		dist;
 	unsigned int	i;
-	unsigned long	hash;
+	double			hash;
 
 	i = 0;
 	while (i < NOISE_DIM)
@@ -52,12 +69,13 @@ dot_dist_grad
 	i = 0;
 	hash = 1;
 	while (i < NOISE_DIM)
-		hash *= y[i++];
-	grad = n->grads[hash];
+		hash *= (x[i++]);
+	hash *= n->seed;
+	grad = n->grads[HASH(hash)];
 	ret = 0;
 	while (i < NOISE_DIM)
 	{
-		ret = dist[i] * grad[i];
+		ret += dist[i] * grad[i];
 		i++;
 	}
 	return (ret);
@@ -101,6 +119,7 @@ dot_lerp
 	{
 		l1 = lerp(tmp[i], tmp[i + 1], weights[i - 1]);
 		l0 = lerp(l0, l1, weights[i - 1]);
+		i++;
 	}
 	return (l0);
 }
@@ -114,12 +133,7 @@ noise
 	t_noise_val		weights;
 	unsigned int	i;
 
-	i = 0;
-	while (i < NOISE_DIM_2)
-	{
-		get_neighbour(&neighbours[i], x, i % 2);
-		i++;
-	}
+	get_neighbours(neighbours, x);
 	i = 0;
 	while (i < NOISE_DIM)
 	{
