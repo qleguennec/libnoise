@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:50:48 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 03:17:37 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/03 03:20:35 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct	s_noise
 }				t_noise;
 
 cl_event		*noise_krl_exec(t_cl_info *cl, cl_kernel krl, t_noise *n, size_t *work_size);
-int				noise_krl_build(t_cl_info *cl, t_noise *n, void *out, size_t len);
+cl_kernel		noise_krl_build(t_cl_info *cl, t_noise *n, void *out, size_t len);
 int				noise_init_k(t_noise *n, unsigned int nseeds, unsigned int k);
 void			noise_init(t_noise *n, unsigned int nseeds);
 

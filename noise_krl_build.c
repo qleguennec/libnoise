@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/02 22:17:19 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 03:17:15 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/03 03:20:22 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define PRGNAME	"noise2.cl"
 #define KRLNAME	"noise2"
 
-int
+cl_kernel
 noise_krl_build
 	(t_cl_info *cl
 	, t_noise *n
@@ -38,7 +38,7 @@ noise_krl_build
 		+ n->ngrads * sizeof(*n->grads)
 		+ sizeof(n->ngrads) + sizeof(n->seed);
 	if (!(fd = open(PRGNAME, O_RDONLY)))
-		return (0);
+		return (NULL);
 	krl = cl_krl_build(cl, fd, KRLNAME, alloc_size);
 	close(fd);
 	cl_write(cl, 0, data, offset);
@@ -49,5 +49,5 @@ noise_krl_build
 	CL_KRL_ARG(krl, 1, mem);
 	mem = mem + offset2;
 	CL_KRL_ARG(krl, 2, mem);
-	return (!!krl);
+	return (krl);
 }
