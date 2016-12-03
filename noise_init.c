@@ -6,108 +6,78 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/30 18:59:17 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/01 06:29:58 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/02 22:08:24 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libnoise_intern.h"
+#include "libnoise.h"
 #include "../libft/malloc.h"
 #include "../libft/libft.h"
 #include <limits.h>
 
-static size_t	fill
+static int
+fill
 	(t_noise *n
-	 , t_noise_val x)
+	 , cl_float2 x
+	 , unsigned int k
+	 , int *used)
 {
-	size_t			i;
-	size_t			cols;
-	unsigned int	j;
-	double			hash;
-	unsigned long	h;
+	size_t	h;
 
-	j = 0;
-	i = 0;
-	cols = 0;
-	hash = 1;
-	while (i < NOISE_DIM)
-		hash += x[i++];
-	h = HASH(hash);
-	i = 0;
-	while (i < NOISE_DIM)
-	{
-		if (n->used[h])
-		{
-			i = 0;
-			j++;
-			cols++;
-			h = (h + j * j) % n->ngrads;
-		}
-		else
-		{
-			i++;
-			n->used[j] = 1;
-			j = 0;
-		}
-	}
-	i = 0;
-	while (i < NOISE_DIM)
-	{
-		n->grads[h][i] = x[i];
-		i++;
-	}
-	return (cols);
+	h = (size_t)((x.x + x.y) * k) % n->ngrads;
+	if (used[h])
+		return (0);
+	n->grads[h].x = x.x;
+	n->grads[h].y = x.y;
+	return (1);
 }
 
-static size_t		fill_grads
+static int
+fill_grads
 	(t_noise *n
-	 , unsigned int nfill)
+	 , size_t nfill
+	 , unsigned int k)
 {
+	cl_float2		x;
+	int				*used;
 	size_t			i;
-	size_t			j;
-	t_noise_val		x;
-	unsigned int	cols;
 
 	i = 0;
-	cols = 0;
+	MALLOC_ZERO_N(used, n->ngrads);
 	while (i < nfill)
 	{
-		j = 0;
-		while (j < NOISE_DIM)
-		{
-			x[j] = rand() / (t_noise_unit)RAND_MAX;
-			j++;
-		}
+		x.x = rand() / (float)RAND_MAX;
+		x.y = rand() / (float)RAND_MAX;
+		if (!fill(n, x, k, used))
+			return (0);
 		i++;
-		cols += fill(n, x);
 	}
-	return (cols);
+	free(used);
+	return (1);
 }
 
-size_t				noise_init
+int
+noise_init_k
 	(t_noise *n
-	 , unsigned int nseeds)
+	 , unsigned int nseeds
+	 , unsigned int k)
 {
-	size_t			cols;
+	unsigned int	seed;
 	unsigned int	step;
-	unsigned long	seed;
 
 	if (n->ngrads % nseeds)
-		return (-1);
+		return (0);
 	if (!n->grads)
-		MALLOC_N(n->grads, n->ngrads);
-	if (!n->used)
-		MALLOC_N(n->used, n->ngrads);
-	ft_bzero(n->grads, n->ngrads * sizeof(*n->grads));
-	ft_bzero(n->used, n->ngrads * sizeof(*n->used));
+		MALLOC_ZERO_N(n->grads, n->ngrads);
 	step = (RAND_MAX - 1) / nseeds;
 	seed = step;
-	cols = 0;
 	while (nseeds)
 	{
 		srand(seed);
-		cols += fill_grads(n, n->ngrads / nseeds);
+		if (!fill_grads(n, n->ngrads / nseeds, k))
+			return (0);
 		seed += step;
 		nseeds--;
 	}
-	return (cols);
+	return (1);
 }

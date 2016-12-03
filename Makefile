@@ -20,7 +20,7 @@ PRINT		=	@printf COL$(PROJECT)$(END)'\t'
 PRPROJ		=	$(subst COL, $(MAGENTA), $(PRINT))
 PRRM		=	$(subst COL, $(CYAN), $(PRINT))
 
-SRCEX		=
+SRCEX		=	noise_fill.c
 SRC			=	$(filter-out $(SRCEX), $(filter %.c, $(shell ls)))
 OBJECTS		=	$(addprefix $(BUILDDIR)/, $(SRC:%.c=%.o))
 
