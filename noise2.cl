@@ -13,8 +13,8 @@ dot_gradient
 	(global constant float2 *grads
 	 , global constant uint ngrads
 	 , local float seed
-	 , local float2 n
-	 , local int2 x)
+	 , local int2	n
+	 , local float2 x)
 {
 	float2	grad;
 	float2	d;
@@ -30,23 +30,27 @@ dot_gradient
 
 kernel void
 noise2
-	(global constant float2 *data
+	(global constant float *dest
+	 , global constant float2 *src
 	 , global constant float2 *grads
 	 , global constant uint ngrads,
 	 , global constant float seed)
 {
-	float2	*out;
 	float2	d;
+	float2	x;
 	float2	e0;
 	float2	e1;
-	float2	i;
+	int2	i;
 	int2	n00;
 	int2	n01;
 	int2	n10;
 	int2	n11;
+	uint	id;
 
+	id = get_local_id{0} * get_local_id{1};
+	x = src[id];
 	out = data + get_local_id(0) * get_local_id(1);
-	n0 = as_int2(*out);
+	n0 = as_int2(x);
 	n01 = n0 + (int2){0, 1};
 	n10 = n0 + (int2){1, 0};
 	n11 = n0 + (int2){1, 1};
@@ -56,5 +60,5 @@ noise2
 	e1.x = dot_gradient(grads, ngrads, seed, n01, x);
 	e1.y = dot_gradient(grads, ngrads, seed, n11, x);
 	i = (float2){lerp(e0, d.x), lerp(e1, d.x)};
-	return (lerp(i, d.y));
+	dest[id] = lerp(i, d.y);
 }
