@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/02 22:17:19 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 01:34:34 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/03 01:48:15 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,8 @@ noise_krl_build
 	cl_write(cl, 0, data, size);
 	cl_write(cl, size, n->grads, n->ngrads * sizeof(*n->grads));
 	mem = cl->mem;
-	CL_KRL_ARG(krl, 0, &mem);
+	CL_KRL_ARG(krl, 0, mem);
 	mem = (cl_float2 *)mem + n->ngrads;
-	CL_KRL_ARG(krl, 1, &mem);
-	CL_KRL_ARG(krl, 2, &n->ngrads);
-	CL_KRL_ARG(krl, 3, &n->seed);
+	CL_KRL_ARG(krl, 1, mem);
 	return (!!krl);
 }
