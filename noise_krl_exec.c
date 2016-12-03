@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/03 01:46:20 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 02:16:30 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/03 03:16:19 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ cl_event
 	 , t_noise *n
 	 , size_t *work_size)
 {
-	CL_KRL_ARG(krl, 2, n->ngrads);
-	CL_KRL_ARG(krl, 3, n->seed);
+	CL_KRL_ARG(krl, 3, n->ngrads);
+	CL_KRL_ARG(krl, 4, n->seed);
 	return (cl_krl_exec(cl, krl, 2, work_size));
 }
