@@ -2,18 +2,19 @@
 
 float
 lerp
-	(float2 edges, float x)
+	(local float2 edges
+	 , local float x)
 {
 	return (edges * (float2){1.0 - x, x});
 }
 
 float
 dot_gradient
-	(float2 *grads
-	 , uint ngrads
-	 , float seed
-	 , float2 n
-	 , int2 x)
+	(global constant float2 *grads
+	 , global constant uint ngrads
+	 , local float seed
+	 , local float2 n
+	 , local int2 x)
 {
 	float2	grad;
 	float2	d;
@@ -29,11 +30,12 @@ dot_gradient
 
 kernel void
 noise2
-	(global float2 *out
-	 , constant float2 *grads
-	 , constant uint ngrads,
-	 , constant float seed)
+	(global constant float2 *data
+	 , global constant float2 *grads
+	 , global constant uint ngrads,
+	 , global constant float seed)
 {
+	float2	*out;
 	float2	d;
 	float2	e0;
 	float2	e1;
@@ -43,7 +45,7 @@ noise2
 	int2	n10;
 	int2	n11;
 
-	out += get_local_id(0) * get_local_id(1);
+	out = data + get_local_id(0) * get_local_id(1);
 	n0 = as_int2(*out);
 	n01 = n0 + (int2){0, 1};
 	n10 = n0 + (int2){1, 0};
