@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/02 22:17:19 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 03:20:22 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/03 03:34:07 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define PRGNAME	"noise2.cl"
+#define PRGNAME	"libnoise/noise2.cl"
 #define KRLNAME	"noise2"
 
 cl_kernel
