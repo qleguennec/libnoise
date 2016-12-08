@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/02 22:17:19 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/03 03:34:07 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/05 17:58:59 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #define KRLNAME	"noise2"
 
 cl_kernel
-noise_krl_build
+	noise_krl_build
 	(t_cl_info *cl
 	, t_noise *n
 	, void *data
@@ -30,24 +30,22 @@ noise_krl_build
 	size_t		alloc_size;
 	size_t		offset;
 	size_t		offset2;
-	void		*mem;
+	char		*mem;
 
 	offset = len * sizeof(cl_float);
 	offset2 = len * sizeof(cl_float2);
-	alloc_size = offset + offset2
-		+ n->ngrads * sizeof(*n->grads)
-		+ sizeof(n->ngrads) + sizeof(n->seed);
+	alloc_size = offset + offset2 + n->ngrads * sizeof(*n->grads);
 	if (!(fd = open(PRGNAME, O_RDONLY)))
 		return (NULL);
 	krl = cl_krl_build(cl, fd, KRLNAME, alloc_size);
 	close(fd);
-	cl_write(cl, 0, data, offset);
-	cl_write(cl, offset, n->grads, offset2);
-	mem = cl->mem;
+	cl_write(cl, offset, data, offset2);
+	cl_write(cl, offset2, n->grads, offset2);
+	mem = (void *)cl->mem;
 	CL_KRL_ARG(krl, 0, mem);
-	mem = mem + offset;
+	mem += offset;
 	CL_KRL_ARG(krl, 1, mem);
-	mem = mem + offset2;
+	mem += offset2;
 	CL_KRL_ARG(krl, 2, mem);
 	return (krl);
 }
