@@ -1,5 +1,5 @@
 static float
-lerp
+	lerp
 	(float2 edges
 	 , float x)
 {
@@ -8,7 +8,7 @@ lerp
 }
 
 static float
-dot_gradient
+	dot_gradient
 	(constant float2 *grads
 	 , uint ngrads
 	 , float seed
@@ -28,7 +28,7 @@ dot_gradient
 }
 
 kernel void
-noise2
+	noise2
 	(global float *dest
 	 , constant float2 *src
 	 , constant float2 *grads

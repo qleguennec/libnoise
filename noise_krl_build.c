@@ -6,7 +6,7 @@
 /*   By: qle-guen <qle-guen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/02 22:17:19 by qle-guen          #+#    #+#             */
-/*   Updated: 2016/12/05 17:58:59 by qle-guen         ###   ########.fr       */
+/*   Updated: 2016/12/08 16:10:04 by qle-guen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ cl_kernel
 	, void *data
 	, size_t len)
 {
+	char		*mem;
 	cl_kernel	krl;
 	int			fd;
 	size_t		alloc_size;
-	size_t		offset;
 	size_t		offset2;
-	char		*mem;
+	size_t		offset;
 
 	offset = len * sizeof(cl_float);
 	offset2 = len * sizeof(cl_float2);
@@ -40,7 +40,7 @@ cl_kernel
 	krl = cl_krl_build(cl, fd, KRLNAME, alloc_size);
 	close(fd);
 	cl_write(cl, offset, data, offset2);
-	cl_write(cl, offset2, n->grads, offset2);
+	cl_write(cl, offset + offset2, n->grads, n->ngrads * sizeof(*n->grads));
 	mem = (void *)cl->mem;
 	CL_KRL_ARG(krl, 0, mem);
 	mem += offset;
