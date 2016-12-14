@@ -9,7 +9,7 @@ static float
 
 static float
 	dot_gradient
-	(constant float2 *grads
+	(global float2 *grads
 	 , uint ngrads
 	 , float seed
 	 , int2	n
@@ -30,8 +30,8 @@ static float
 kernel void
 	noise2
 	(global float *dest
-	 , constant float2 *src
-	 , constant float2 *grads
+	 , global float2 *src
+	 , global float2 *grads
 	 , uint ngrads
 	 , float seed)
 {
@@ -45,9 +45,10 @@ kernel void
 	int2	n11;
 	uint	id;
 
-	id = (uint)get_local_id(0) * (uint)get_local_id(1);
+	id = (uint)get_global_id(0) * (uint)get_global_id(1);
 	x = src[id];
-	n00 = as_int2(x);
+	n00.x = x.x;
+	n00.y = x.y;
 	n01 = n00 + (int2){0, 1};
 	n10 = n00 + (int2){1, 0};
 	n11 = n00 + (int2){1, 1};
